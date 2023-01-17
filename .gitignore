@@ -1,0 +1,5 @@
+/__pycache__
+/.vscode
+/param_lists
+**/.DS_Store
+env
