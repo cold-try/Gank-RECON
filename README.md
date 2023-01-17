@@ -68,4 +68,4 @@ If you want to support my work and encourage me in the creation of security tool
 
 ## License
 
-@Apache
+MIT
