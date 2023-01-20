@@ -51,9 +51,6 @@ def external_service_call(targeted_service, target, findings):
     print(f"{Fore.LIGHTGREEN_EX}")
 
     for subdo in targeted_service_findings:
-        if targeted_service == 'binary_edge' or targeted_service == 'censys':
-            print(targeted_service)
-
         if services[targeted_service][2]:
             formatted_subdo = f"https://{subdo}"
         else:
