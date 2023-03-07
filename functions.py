@@ -4,6 +4,7 @@ import asyncio
 import httpx
 import re
 import csv
+import os
 from colorama import Fore, Style
 from censys.search import CensysCertificates
 from bs4 import BeautifulSoup
@@ -14,13 +15,14 @@ async def get_async(url):
     headers = {'User-Agent':user_agent}
     try:
         async with httpx.AsyncClient() as client:
-            return await client.get(url, headers=headers)
+            return await client.get(url, headers=headers, timeout=5)
     except:
         pass
 
 
 async def url_testing(urls):
     responses = {}
+    html_pages = {}
     resps = await asyncio.gather(*map(get_async, urls))
     data = [resp for resp in resps]
 
@@ -30,8 +32,9 @@ async def url_testing(urls):
                 responses[resp.status_code].append(resp.url)
             else:
                 responses[resp.status_code]=[resp.url]
+            html_pages[resp.url]=resp.text
 
-    return responses
+    return responses, html_pages
 
 
 def external_service_call(targeted_service, target, findings):
@@ -40,7 +43,11 @@ def external_service_call(targeted_service, target, findings):
         'crt_sh': [crt_sh, 'CRT.SH', True],
         'security_trails': [securitytrails_api, 'Security trails API', False],
         'binary_edge': [binaryedge_api, 'BinaryEdge API', True],
-        'censys': [censys_api, 'Censys API', True]
+        'censys': [censys_api, 'Censys API', True],
+        'virus_total': [virustotal_api, 'VirusTotal API', True],
+        'alienvault': [alienvault_api, 'AlienVault API', True],
+        'bevigil': [bevigil_api, 'Bevigil API', True],
+        'intelx': [intelx_api, 'Intelligence X API', True]
     }
     finding_counter = 0
     targeted_service_findings = services[targeted_service][0](target)
@@ -153,6 +160,90 @@ def censys_api(target):
         return []
 
 
+def virustotal_api(target):
+    virus_total = get_info_config('apiKey', 'virustotal')
+    headers = {'x-apikey': virus_total}
+    endpoint = f"https://www.virustotal.com/api/v3/domains/{target}/subdomains?limit=1000"
+    results = []
+
+    response = requests.get(endpoint, headers=headers)
+    try: response_to_json = json.loads(response.text)
+    except: response_to_json = {}
+
+    if len(response_to_json) > 0:
+        while True:
+            try:
+                for subdomain_data in response_to_json['data']:
+                    results.append(subdomain_data['id'])
+
+                if len(response_to_json['links'])>1:
+                    response = requests.get(response_to_json['links']['next'], headers=headers)
+                    response_to_json = json.loads(response.text)
+                else:
+                    break
+            except: pass
+
+    return results
+
+
+def alienvault_api(target):
+    endpoint = f"https://otx.alienvault.com/api/v1/indicators/domain/{target}/passive_dns"
+    response = requests.get(endpoint)
+    response_to_json = json.loads(response.text)
+    results = []
+
+    if 'passive_dns' in response_to_json:
+        for subdomain in response_to_json['passive_dns']:
+            if target in subdomain['hostname']:
+                results.append(subdomain['hostname'])
+    
+    return results
+
+
+def bevigil_api(target):
+    bevigil_key = get_info_config('apiKey', 'bevigil')
+    endpoint = f"http://osint.bevigil.com/api/{target}/subdomains/"
+    headers = {'X-Access-Token': bevigil_key}
+    response = requests.get(endpoint, headers=headers)
+    response_to_json = json.loads(response.text)
+    results = []
+
+    if 'subdomains' in response_to_json:
+        for subdomain in response_to_json['subdomains']:
+            results.append(subdomain)
+    
+    return results
+
+
+def intelx_api(target):
+    intelx_key = get_info_config('apiKey', 'intelligencex')
+    endpoint = "https://2.intelx.io/phonebook/search"
+    headers = {"x-key": intelx_key}
+    payload = {
+        "term":target,
+        "maxresults":10000,
+        "media":0,
+        "target":1,
+        "timeout":20
+    }
+    results = []
+
+    try:
+        response = requests.post(endpoint, headers=headers,  data=json.dumps(payload))
+        response_to_json = json.loads(response.text)
+
+        result_id = response_to_json['id']
+        result_endpoint = f"https://2.intelx.io/phonebook/search/result?id={result_id}&limit=10000"
+        response = requests.get(result_endpoint, headers=headers)
+        response_to_json = json.loads(response.text)
+
+        for subdomain in response_to_json['selectors']:
+            results.append(subdomain['selectorvalue'])
+    except: pass
+    
+    return results
+
+
 def subdo_filter(url, target_size):
     splitter = url.split('//')
     return splitter[1][:-target_size-1]
@@ -216,6 +307,16 @@ def get_info_config(root, spec=None):
         return data[root][spec]
     else:
         return data[root]
+
+
+def load_wordlist(filename):
+    try:
+        wordlist = open(f'bruteforce_lists/{filename}','r').read().split("\n")
+    except:
+        root = os.path.abspath(os.path.dirname(__file__))
+        filename = os.path.join(root, "", filename)
+        wordlist = open(f'bruteforce_lists/{filename}','r').read().split("\n")
+    return filter(None, wordlist)
 
 
 def dict_merge(dict1, dict2):

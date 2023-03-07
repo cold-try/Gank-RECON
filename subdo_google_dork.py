@@ -14,7 +14,7 @@ from functions import get_info_config, subdo_filter
 
 def google_dork_sub(target):
 
-    options = webdriver.ChromeOptions() 
+    options = webdriver.ChromeOptions()
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
     options.add_argument("--disable-blink-features")
@@ -22,6 +22,9 @@ def google_dork_sub(target):
     options.add_argument("--start-maximized")
     options.add_argument('--window-size=1920,1080')
     options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-gpu")
+    options.add_argument("--disable-dev-shm-usage")
 
     print('')
     print(f'{Fore.LIGHTCYAN_EX}Recovery of the latest version of chromedriver (dl/cache)...{Style.RESET_ALL}')
@@ -50,7 +53,10 @@ def google_dork_sub(target):
             WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.CLASS_NAME, "tjvcx")))
 
             if launch:
-                driver.find_elements(by=By.CSS_SELECTOR, value="[class='QS5gu sy4vM']")[0].click()
+                try:
+                    driver.find_elements(by=By.CSS_SELECTOR, value="[class='QS5gu sy4vM']")[0].click()
+                except IndexError:
+                    pass
 
             subdo_current_page = driver.find_elements(by=By.CLASS_NAME, value="tjvcx")
 

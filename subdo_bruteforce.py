@@ -1,22 +1,12 @@
-import os
 import requests
 import concurrent.futures
 from colorama import Fore, Style
-from functions import get_info_config
+from functions import get_info_config, load_wordlist
 
 
 user_agent = get_info_config('userAgent')
 headers = {"user-agent": user_agent}
 
-
-def load_wordlist(filename):
-    try:
-        wordlist = open(f'bruteforce_lists/{filename}','r').read().split("\n")
-    except:
-        root = os.path.abspath(os.path.dirname(__file__))
-        filename = os.path.join(root, "", filename)
-        wordlist = open(f'bruteforce_lists/{filename}','r').read().split("\n")
-    return filter(None, wordlist)
 
 
 def test_https(url):
