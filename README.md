@@ -26,8 +26,9 @@ Subdomains enumeration, various scans and testing of some vulnerabilities.
 
 ## ⚡️ Installation
 
-• Python 3 is required
-• Install dependencies (preferably in a virtual environment) :
+- Python 3 is required
+- Chrome browser (or Chromium) is required
+- Install dependencies (preferably in a virtual environment) :
 ```sh
 pip install requirements.txt
 ```
