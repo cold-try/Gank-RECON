@@ -82,22 +82,26 @@ def external_service_call(targeted_service, target, findings):
 
 def crt_sh(target):
     domains=[]
-
     url=f"https://crt.sh/?q={target}"
-    req=requests.get(url)
-    soup = BeautifulSoup(req.text, "html.parser")
-    td=soup.find_all("td")
 
-    for dom in td:
-        domain = re.search(f"(.*)\.{target}", dom.getText())
+    try:
+        req=requests.get(url)
+        soup = BeautifulSoup(req.text, "html.parser")
+        td=soup.find_all("td")
 
-        if domain:
-            line_content = domain.group().split(f".{target}")
-            
-            for subdo in line_content:
-                re_format_subdo = f"{subdo}.{target}"
-                if subdo and re_format_subdo not in domains:
-                    domains.append(re_format_subdo)
+        for dom in td:
+            domain = re.search(f"(.*)\.{target}", dom.getText())
+
+            if domain:
+                line_content = domain.group().split(f".{target}")
+                
+                for subdo in line_content:
+                    re_format_subdo = f"{subdo}.{target}"
+                    if subdo and re_format_subdo not in domains:
+                        domains.append(re_format_subdo)
+    except:
+        pass
+    
     return domains
 
 
