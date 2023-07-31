@@ -4,7 +4,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 from colorama import Fore, Style
 from time import sleep
 from random import shuffle
@@ -29,7 +28,7 @@ def google_dork_sub(target):
     print('')
     print(f'{Fore.LIGHTCYAN_EX}Recovery of the latest version of chromedriver (dl/cache)...{Style.RESET_ALL}')
 
-    service = Service(ChromeDriverManager(log_level=0).install())
+    service = Service()
     driver = webdriver.Chrome(service=service, options=options)
     driver.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": get_info_config('userAgent')})
 
