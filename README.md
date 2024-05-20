@@ -30,7 +30,7 @@ Subdomains enumeration, various scans and testing of some vulnerabilities.
 - Chrome browser (or Chromium) is required
 - Install dependencies (preferably in a virtual environment) :
 ```sh
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 ---
 If you are on a linux machine it may be necessary to install the libnss3 package :
