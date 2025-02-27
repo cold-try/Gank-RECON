@@ -5,7 +5,7 @@ Subdomains enumeration, various scans and testing of some vulnerabilities.
   <img src="https://github.com/cold-try/Gank-RECON/blob/master/media/gank_recon_logo.png" height=250/>
 </p>
 
-## ⚙️ Features
+## Features
 
 - Enumeration of subdomains from a domain name 
 - Checking if a subdomain is takeoverable
@@ -18,13 +18,13 @@ Subdomains enumeration, various scans and testing of some vulnerabilities.
 
 > Possibility to customize certain parameters via the config.json file: personal word list (bruteforce), preferred ports, user-agent..
 
-## 🧪 Logic
+## Logic
 
 <p align="center">
   <img src="https://github.com/cold-try/Gank-RECON/blob/master/media/gank_recon_logic.png" height=700/>
 </p>
 
-## ⚡️ Installation
+## Installation
 
 - Python 3 is required
 - Chrome browser (or Chromium) is required
@@ -38,7 +38,7 @@ If you are on a linux machine it may be necessary to install the libnss3 package
 sudo apt-get install libnss3
 ```
 
-## 🚀 Launch
+## Launch
 
 • Before starting we need to get some API keys, this is not mandatory but highly recommended to maximize our results.
 
@@ -69,24 +69,17 @@ python3 core.py
   <img src="https://github.com/cold-try/Gank-RECON/blob/master/media/output_exmpl2.png" height=500/>
 </p>
 
-## 🚨 Disclaimer 
+## Disclaimer 
 
 • The objective of this tool is preventive and aims to secure websites by detecting potential vulnerabilities. The use of this tool on a website without the explicit agreement of its owner is strictly prohibited.
 
 • When using this tool on a bug bounty program, please be sure to read the policy of the targeted platform. Some companies do not accept active scans, in this case please limit yourself to the subdomain listing and do not enable options that go against this policy.
 
-## 💡Inspiration
+## Inspiration
 
 Some regex used to find secrets come from the very good repository: GitGraber
 https://github.com/hisxo/gitGraber
 
-## 🦾 Support me
-
-If you want to support my work and encourage me in the creation of security tools, don't hesitate to buy me a coffee here : 
-
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/zhero)
-
-Twitter Account : https://twitter.com/blank_cold
 
 ## License
 
